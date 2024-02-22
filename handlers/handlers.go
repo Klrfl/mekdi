@@ -92,7 +92,7 @@ func IndexHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	data := map[string]interface{}{
-		"name": "siapa kek",
+		"name": "Ronald McDonald",
 		"data": menuList,
 	}
 
