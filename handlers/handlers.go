@@ -68,7 +68,6 @@ func getMenu(menuID ...uuid.UUID) ([]models.Menu, error) {
 		}
 
 		menuList = append(menuList, menu)
-		log.Println(menuList)
 		return menuList, nil
 	}
 
@@ -154,7 +153,6 @@ func IndexHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func HandleMenuByID(w http.ResponseWriter, r *http.Request) {
-	log.Println(r.URL.Path)
 	IDParam := strings.TrimPrefix(r.URL.Path, "/menu/")
 	var filepath string
 
