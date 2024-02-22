@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <title>Something something</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link href="/assets/style.css" rel="stylesheet" />
+  </head>
+
+  <body>
+    <main>
+      <h1>{{.data.Name}}</h1>
+      <p>{{.data.Description}}</p>
+      <p>{{.data.ServingSize}}</p>
+      <p>{{.data.Ingredients}}</p>
+      <p>{{.data.Tag}}</p>
+      <p>{{.data.Allergy}}</p>
+      <div class="misc-info">
+        <span>{{.data.Protein}}</span>
+        <span>{{.data.TotalFat}}</span>
+        <span>{{.data.Transfat}}</span>
+      </div>
+    </main>
+  </body>
+</html>

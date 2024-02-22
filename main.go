@@ -12,5 +12,8 @@ func main() {
 
 	http.Handle("/assets/", http.StripPrefix("/assets/", http.FileServer(http.Dir("assets"))))
 	http.HandleFunc("/", handlers.IndexHandler)
+
+	http.HandleFunc("/menu/", handlers.HandleMenuByID)
+
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }
