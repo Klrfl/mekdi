@@ -21,6 +21,21 @@ body {
 }
 
 main {
-  width: min(75ch, 100%);
+  width: min(120ch, 100%);
   margin-inline: auto;
+}
+
+.menu-list {
+  margin: 0;
+  list-style: none;
+
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(0, 100%), 1fr));
+  gap: 1rem;
+}
+
+.menu-item {
+  border-radius: 0.5rem;
+  outline: 1px solid #ddd;
+  padding: 1rem;
 }
