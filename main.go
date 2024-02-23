@@ -14,7 +14,8 @@ func main() {
 	http.HandleFunc("/", handlers.IndexHandler)
 
 	http.HandleFunc("/menu/", handlers.HandleMenuByID)
-	http.HandleFunc("/edit/", handlers.EditMenuByID)
+	http.HandleFunc("/menu/new/", handlers.HandleNewMenuItem)
+	http.HandleFunc("/menu/edit/", handlers.EditMenuByID)
 
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }

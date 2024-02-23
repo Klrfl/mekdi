@@ -22,12 +22,14 @@ func getMenu(menuID ...uuid.UUID) ([]models.Menu, error) {
 		Ingredients: "",
 		Allergy:     "",
 		Tag:         "",
+		Description: "",
 	}
 
 	var servingSize sql.NullString
 	var ingredients sql.NullString
 	var tag sql.NullString
 	var allergy sql.NullString
+	var description sql.NullString
 
 	if len(menuID) == 1 {
 		row := database.DB.QueryRow("select * from menu where id = $1", menuID[0])
@@ -48,7 +50,7 @@ func getMenu(menuID ...uuid.UUID) ([]models.Menu, error) {
 			&menu.TotalSugar,
 			&menu.AddedSugar,
 			&menu.Sodium,
-			&menu.Description,
+			&description,
 			&menu.ID,
 		); err != nil {
 			return nil, err
@@ -65,6 +67,9 @@ func getMenu(menuID ...uuid.UUID) ([]models.Menu, error) {
 		}
 		if allergy.Valid {
 			menu.Allergy = allergy.String
+		}
+		if description.Valid {
+			menu.Description = description.String
 		}
 
 		menuList = append(menuList, menu)
@@ -95,7 +100,7 @@ func getMenu(menuID ...uuid.UUID) ([]models.Menu, error) {
 			&menu.TotalSugar,
 			&menu.AddedSugar,
 			&menu.Sodium,
-			&menu.Description,
+			&description,
 			&menu.ID,
 		); err != nil {
 			return nil, err
@@ -113,6 +118,9 @@ func getMenu(menuID ...uuid.UUID) ([]models.Menu, error) {
 		if allergy.Valid {
 			menu.Allergy = allergy.String
 		}
+		if description.Valid {
+			menu.Description = description.String
+		}
 
 		menuList = append(menuList, menu)
 	}
@@ -122,6 +130,42 @@ func getMenu(menuID ...uuid.UUID) ([]models.Menu, error) {
 	}
 
 	return menuList, nil
+}
+
+func HandleNewMenuItem(w http.ResponseWriter, r *http.Request) {
+	err := r.ParseForm()
+	if err != nil {
+		http.Error(w, "error when parsing menu item data", http.StatusInternalServerError)
+	}
+
+	formData := r.Form
+	if len(formData) != 0 {
+		menuID := uuid.New()
+		menuName := formData.Get("menu-name")
+		menuServingSize := formData.Get("menu-serving-size")
+		menuIngredients := formData.Get("menu-ingredients")
+		menuTag := formData.Get("menu-tag")
+		menuAllergy := formData.Get("menu-allergy")
+		log.Println(menuAllergy)
+
+		query := "insert into menu(id, name, serving_size, ingredients, tag, allergy) values($1, $2, $3, $4, $5, $6)"
+		_, err := database.DB.Exec(query, menuID, menuName, menuServingSize, menuIngredients, menuTag, menuAllergy)
+
+		if err != nil {
+			log.Println(err)
+			http.Error(w, "error when creating new menu item", http.StatusInternalServerError)
+			return
+		}
+	}
+
+	filepath := path.Join("views", "newItem.html")
+	tmpl, err := template.ParseFiles(filepath)
+	if err != nil {
+		http.Error(w, "error when rendering frontend", http.StatusInternalServerError)
+		return
+	}
+
+	tmpl.Execute(w, nil)
 }
 
 func IndexHandler(w http.ResponseWriter, r *http.Request) {
@@ -229,4 +273,19 @@ func EditMenuByID(w http.ResponseWriter, r *http.Request) {
 	}
 
 	tmpl.Execute(w, data)
+}
+
+func DeleteMenuItem(w http.ResponseWriter, r *http.Request) {
+	paramID := strings.TrimPrefix(r.URL.Path, "/menu/delete")
+	menuID, err := uuid.Parse(paramID)
+	if err != nil {
+		http.Error(w, "invalid menu ID", http.StatusBadRequest)
+		return
+	}
+
+	_, err = database.DB.Exec("delete from menu where id = $1", menuID)
+	if err != nil {
+		http.Error(w, "error when deleting menu item", http.StatusInternalServerError)
+		return
+	}
 }

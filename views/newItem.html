@@ -11,7 +11,7 @@
   <body>
     <main>
       <h1>Create new menu item</h1>
-      <form action="/new/" method="post">
+      <form action="/menu/new/" method="post">
         <label for="menu-name">Name</label>
         <input
           type="text"
@@ -25,6 +25,7 @@
         <input
           type="text"
           serving-size="menu-serving-size"
+          name="menu-serving-size"
           id="menu-serving-size"
           placeholder="vegetables"
           required
@@ -34,24 +35,25 @@
         <input
           type="text"
           ingredients="menu-ingredients"
+          name="menu-ingredients"
           id="menu-ingredients"
           placeholder="ingredients"
-          required
         />
 
         <label for="menu-tag">Menu tag</label>
         <input
           type="text"
           tag="menu-tag"
+          name="menu-tag"
           id="menu-tag"
           placeholder="tags (WIP)"
-          required
         />
 
         <label for="menu-allergy">Menu allergy</label>
         <input
           type="text"
           allergy="menu-allergy"
+          name="menu-allergy"
           id="menu-allergy"
           placeholder="allergy"
           required
