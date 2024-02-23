@@ -16,11 +16,13 @@
         {{range .data}}
         <li class="menu-item">
           <article>
-            <h2>{{.Name}}</h2>
-            <p>{{.Tag}}</p>
-            <p>{{.ServingSize}}</p>
-            <p>{{.Ingredients}}</p>
-            <p>{{.Description}}</p>
+            <a href="/menu/{{.ID}}">
+              <h2>{{.Name}}</h2>
+              <p>{{.Tag}}</p>
+              <p>{{.ServingSize}}</p>
+              <p>{{.Ingredients}}</p>
+              <p>{{.Description}}</p>
+            </a>
           </article>
         </li>
         {{end}}

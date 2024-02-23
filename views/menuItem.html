@@ -11,14 +11,21 @@
     <main>
       <h1>{{.data.Name}}</h1>
       <p>{{.data.Description}}</p>
-      <p>{{.data.ServingSize}}</p>
-      <p>{{.data.Ingredients}}</p>
-      <p>{{.data.Tag}}</p>
-      <p>{{.data.Allergy}}</p>
+
+      <p>Serving size: {{.data.ServingSize}}</p>
+      <p>ingredients:</p>
+      <ul>
+        <li>{{.data.Ingredients}}</li>
+      </ul>
+
+      <p>Tags: {{.data.Tag}}</p>
+      <p>Allergies: {{.data.Allergy}}</p>
+
+      <p>Miscellaneous info</p>
       <div class="misc-info">
-        <span>{{.data.Protein}}</span>
-        <span>{{.data.TotalFat}}</span>
-        <span>{{.data.Transfat}}</span>
+        <span>Protein: {{.data.Protein}}</span>
+        <span>Trans fat: {{.data.TransFat}}</span>
+        <span>Total fat: {{.data.TotalFat}}</span>
       </div>
     </main>
   </body>

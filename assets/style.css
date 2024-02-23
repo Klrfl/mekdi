@@ -26,11 +26,12 @@ main {
 }
 
 .menu-list {
+  padding: 0;
   margin: 0;
   list-style: none;
 
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(0, 100%), 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(30ch, 100%), 1fr));
   gap: 1rem;
 }
 
@@ -38,4 +39,9 @@ main {
   border-radius: 0.5rem;
   outline: 1px solid #ddd;
   padding: 1rem;
+}
+
+.menu-item a {
+  color: inherit;
+  text-decoration: none;
 }
