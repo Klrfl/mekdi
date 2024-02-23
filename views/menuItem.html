@@ -8,7 +8,7 @@
   </head>
 
   <body>
-    <main>
+    <main id="view-page">
       <h1>{{.data.Name}}</h1>
       <p>{{.data.Description}}</p>
 
@@ -28,7 +28,62 @@
         <span>Total fat: {{.data.TotalFat}}</span>
       </div>
 
-      <a href="/menu/edit/{{.data.ID}}">Edit this menu item</a>
+      <button class="edit-toggle">Edit this menu item</button>
     </main>
+
+    <main id="edit-page" class="hidden">
+      <h1>Edit menu item</h1>
+      <form id="edit-form" action="/menu/{{.data.ID}}" method="post">
+        <label for="menu-name">Name</label>
+        <input
+          type="text"
+          name="menu-name"
+          id="menu-name"
+          value="{{.data.Name}}"
+          placeholder="hi"
+          required
+        />
+        <label for="menu-serving-size">Serving size</label>
+        <input
+          type="text"
+          name="menu-serving-size"
+          id="menu-serving-size"
+          value="{{.data.ServingSize}}"
+          placeholder="69ml"
+          required
+        />
+        <label for="menu-ingredients">Ingredients</label>
+        <input
+          type="text"
+          name="menu-ingredients"
+          id="menu-ingredients"
+          value="{{.data.Ingredients}}"
+          placeholder="idk man"
+        />
+
+        <label for="menu-tag">Tag</label>
+        <input
+          type="text"
+          name="menu-tag"
+          id="menu-tag"
+          value="{{.data.Tag}}"
+          placeholder="some tags"
+        />
+        <label for="menu-allergy">Allergy</label>
+        <input
+          type="text"
+          name="menu-allergy"
+          id="menu-allergy"
+          value="{{.data.Allergy}}"
+          placeholder="some allergies wtf does that even mean"
+        />
+
+        <button type="submit" class="submit-btn">Update menu item data</button>
+      </form>
+
+      <button class="edit-toggle">Go back</button>
+    </main>
+
+    <script src="/assets/app.js"></script>
   </body>
 </html>

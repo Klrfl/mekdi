@@ -1,3 +1,7 @@
+:root {
+  color-scheme: light dark;
+}
+
 *,
 *::before,
 *::after {
@@ -54,6 +58,15 @@ main {
 .menu__tag {
   margin-block: 0.2rem 0.5rem;
   font-size: 0.8rem;
+}
+
+.hidden {
+  display: none;
+}
+
+.edit-toggle {
+  padding: 1rem;
+  cursor: pointer;
 }
 
 form :is(input, label),
