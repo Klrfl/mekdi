@@ -132,68 +132,70 @@ func getMenu(menuID ...uuid.UUID) ([]models.Menu, error) {
 	return menuList, nil
 }
 
-func HandleNewMenuItem(w http.ResponseWriter, r *http.Request) {
-	err := r.ParseForm()
-	if err != nil {
-		http.Error(w, "error when parsing menu item data", http.StatusInternalServerError)
-	}
-
-	formData := r.Form
-	if len(formData) != 0 {
-		menuID := uuid.New()
-		menuName := formData.Get("menu-name")
-		menuServingSize := formData.Get("menu-serving-size")
-		menuIngredients := formData.Get("menu-ingredients")
-		menuTag := formData.Get("menu-tag")
-		menuAllergy := formData.Get("menu-allergy")
-		log.Println(menuAllergy)
-
-		query := "insert into menu(id, name, serving_size, ingredients, tag, allergy) values($1, $2, $3, $4, $5, $6)"
-		_, err := database.DB.Exec(query, menuID, menuName, menuServingSize, menuIngredients, menuTag, menuAllergy)
-
-		if err != nil {
-			log.Println(err)
-			http.Error(w, "error when creating new menu item", http.StatusInternalServerError)
-			return
-		}
-	}
-
-	filepath := path.Join("views", "newItem.html")
-	tmpl, err := template.ParseFiles(filepath)
-	if err != nil {
-		http.Error(w, "error when rendering frontend", http.StatusInternalServerError)
-		return
-	}
-
-	tmpl.Execute(w, nil)
-}
-
 func IndexHandler(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/" {
 		http.NotFound(w, r)
 		return
 	}
 
-	filepath := path.Join("views", "index.html")
-	tmpl, err := template.ParseFiles(filepath)
+	switch r.Method {
+	case http.MethodGet:
+		filepath := path.Join("views", "index.html")
+		tmpl, err := template.ParseFiles(filepath)
 
-	if err != nil {
-		http.Error(w, "error when rendering frontend!", http.StatusInternalServerError)
+		if err != nil {
+			http.Error(w, "error when rendering frontend!", http.StatusInternalServerError)
+		}
+
+		menuList, err := getMenu()
+		if err != nil {
+			log.Println(err)
+		}
+
+		data := map[string]interface{}{
+			"data": menuList,
+		}
+
+		err = tmpl.Execute(w, data)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
+	case http.MethodPost:
+		err := r.ParseForm()
+		if err != nil {
+			http.Error(w, "error when parsing menu item data", http.StatusInternalServerError)
+		}
+
+		formData := r.Form
+		if len(formData) != 0 {
+			menuID := uuid.New()
+			menuName := formData.Get("menu-name")
+			menuServingSize := formData.Get("menu-serving-size")
+			menuIngredients := formData.Get("menu-ingredients")
+			menuTag := formData.Get("menu-tag")
+			menuAllergy := formData.Get("menu-allergy")
+
+			query := "insert into menu(id, name, serving_size, ingredients, tag, allergy) values($1, $2, $3, $4, $5, $6)"
+			_, err := database.DB.Exec(query, menuID, menuName, menuServingSize, menuIngredients, menuTag, menuAllergy)
+
+			if err != nil {
+				log.Println(err)
+				http.Error(w, "error when creating new menu item", http.StatusInternalServerError)
+				return
+			}
+		}
+
+		filepath := path.Join("views", "newItem.html")
+		tmpl, err := template.ParseFiles(filepath)
+		if err != nil {
+			http.Error(w, "error when rendering frontend", http.StatusInternalServerError)
+			return
+		}
+
+		tmpl.Execute(w, nil)
+
 	}
 
-	menuList, err := getMenu()
-	if err != nil {
-		log.Println(err)
-	}
-
-	data := map[string]interface{}{
-		"data": menuList,
-	}
-
-	err = tmpl.Execute(w, data)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-	}
 }
 
 func HandleMenuByID(w http.ResponseWriter, r *http.Request) {
@@ -205,46 +207,36 @@ func HandleMenuByID(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// TODO: get menu item by ID
-	menuItem, err := getMenu(menuID)
-	if err == sql.ErrNoRows {
-		http.NotFound(w, r)
-		return
+	switch r.Method {
+	case http.MethodGet:
+		menuItem, err := getMenu(menuID)
+		if err == sql.ErrNoRows {
+			http.NotFound(w, r)
+			return
+		}
 
-	}
-	filepath := path.Join("views", "menuItem.html")
-	tmpl, err := template.ParseFiles(filepath)
+		filepath := path.Join("views", "menuItem.html")
+		tmpl, err := template.ParseFiles(filepath)
 
-	if err != nil {
-		http.Error(w, "error when rendering frontend!", http.StatusInternalServerError)
-	}
+		if err != nil {
+			http.Error(w, "error when rendering frontend!", http.StatusInternalServerError)
+		}
 
-	data := map[string]*models.Menu{
-		"data": &menuItem[0],
-	}
+		data := map[string]*models.Menu{
+			"data": &menuItem[0],
+		}
 
-	tmpl.Execute(w, data)
+		tmpl.Execute(w, data)
 
-}
+	// create new menu item
+	case http.MethodPost:
+		err = r.ParseForm()
+		if err != nil {
+			http.Error(w, fmt.Sprintf("error processing form data: %s", err), http.StatusInternalServerError)
+			return
+		}
 
-func EditMenuByID(w http.ResponseWriter, r *http.Request) {
-	paramID := strings.TrimPrefix(r.URL.Path, "/menu/edit/")
-	menuID, err := uuid.Parse(paramID)
-
-	if err != nil {
-		http.Error(w, "error parsing menu ID", http.StatusBadRequest)
-		return
-	}
-
-	//TODO: get form data and render the page again
-	err = r.ParseForm()
-	if err != nil {
-		http.Error(w, "error processing form data", http.StatusInternalServerError)
-		return
-	}
-
-	formData := r.Form
-	if len(formData) != 0 {
+		formData := r.Form
 		menuName := formData["menu-name"][0]
 		menuServingSize := formData["menu-serving-size"][0]
 		menuIngredients := formData["menu-ingredients"][0]
@@ -257,35 +249,19 @@ func EditMenuByID(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "error when updating menu item", http.StatusInternalServerError)
 			return
 		}
-	}
 
-	existingMenuItem, err := getMenu(menuID)
-	if err != nil {
-		http.NotFound(w, r)
-		return
-	}
+		// https://stackoverflow.com/questions/35934298/how-to-redirect-to-a-url
+		// thanks a lot !!!
+		http.Redirect(w, r, fmt.Sprintf("/menu/%s", menuID), http.StatusSeeOther)
 
-	filepath := path.Join("views", "editItem.html")
-	tmpl, err := template.ParseFiles(filepath)
+	case http.MethodDelete:
+		_, err = database.DB.Exec("delete from menu where id = $1", menuID)
+		if err != nil {
+			http.Error(w, "error when deleting menu item", http.StatusInternalServerError)
+			return
+		}
 
-	data := map[string]models.Menu{
-		"data": existingMenuItem[0],
-	}
-
-	tmpl.Execute(w, data)
-}
-
-func DeleteMenuItem(w http.ResponseWriter, r *http.Request) {
-	paramID := strings.TrimPrefix(r.URL.Path, "/menu/delete")
-	menuID, err := uuid.Parse(paramID)
-	if err != nil {
-		http.Error(w, "invalid menu ID", http.StatusBadRequest)
-		return
-	}
-
-	_, err = database.DB.Exec("delete from menu where id = $1", menuID)
-	if err != nil {
-		http.Error(w, "error when deleting menu item", http.StatusInternalServerError)
-		return
+	default:
+		http.Error(w, "idk man, method not allowed I guess", http.StatusInternalServerError)
 	}
 }
