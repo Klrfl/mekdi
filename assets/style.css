@@ -21,7 +21,7 @@ body {
 }
 
 main {
-  width: min(120ch, 100%);
+  width: calc(min(120ch, 100%) - 4rem);
   margin-inline: auto;
 }
 
@@ -44,6 +44,16 @@ main {
 .menu-item a {
   color: inherit;
   text-decoration: none;
+}
+
+.menu__title {
+  line-height: 0.9;
+  margin-block: 0 0.5rem;
+}
+
+.menu__tag {
+  margin-block: 0.2rem 0.5rem;
+  font-size: 0.8rem;
 }
 
 form :is(input, label),

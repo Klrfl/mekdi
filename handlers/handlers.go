@@ -228,7 +228,7 @@ func HandleMenuByID(w http.ResponseWriter, r *http.Request) {
 }
 
 func EditMenuByID(w http.ResponseWriter, r *http.Request) {
-	paramID := strings.TrimPrefix(r.URL.Path, "/edit/")
+	paramID := strings.TrimPrefix(r.URL.Path, "/menu/edit/")
 	menuID, err := uuid.Parse(paramID)
 
 	if err != nil {
