@@ -18,10 +18,10 @@ func getMenu(menuID ...uuid.UUID) ([]models.Menu, error) {
 	var menuList []models.Menu
 
 	menu := models.Menu{
-		ServingSize: "no serving size",
-		Ingredients: "no ingredients",
-		Allergy:     "no allergies",
-		Tag:         "no tags",
+		ServingSize: "",
+		Ingredients: "",
+		Allergy:     "",
+		Tag:         "",
 	}
 
 	var servingSize sql.NullString
@@ -154,8 +154,6 @@ func IndexHandler(w http.ResponseWriter, r *http.Request) {
 
 func HandleMenuByID(w http.ResponseWriter, r *http.Request) {
 	IDParam := strings.TrimPrefix(r.URL.Path, "/menu/")
-	var filepath string
-
 	menuID, err := uuid.Parse(IDParam)
 
 	if err != nil {
@@ -170,7 +168,7 @@ func HandleMenuByID(w http.ResponseWriter, r *http.Request) {
 		return
 
 	}
-	filepath = path.Join("views", "menuItem.html")
+	filepath := path.Join("views", "menuItem.html")
 	tmpl, err := template.ParseFiles(filepath)
 
 	if err != nil {
@@ -183,4 +181,52 @@ func HandleMenuByID(w http.ResponseWriter, r *http.Request) {
 
 	tmpl.Execute(w, data)
 
+}
+
+func EditMenuByID(w http.ResponseWriter, r *http.Request) {
+	paramID := strings.TrimPrefix(r.URL.Path, "/edit/")
+	menuID, err := uuid.Parse(paramID)
+
+	if err != nil {
+		http.Error(w, "error parsing menu ID", http.StatusBadRequest)
+		return
+	}
+
+	//TODO: get form data and render the page again
+	err = r.ParseForm()
+	if err != nil {
+		http.Error(w, "error processing form data", http.StatusInternalServerError)
+		return
+	}
+
+	formData := r.Form
+	if len(formData) != 0 {
+		menuName := formData["menu-name"][0]
+		menuServingSize := formData["menu-serving-size"][0]
+		menuIngredients := formData["menu-ingredients"][0]
+		menuTag := formData["menu-tag"][0]
+		menuAllergy := formData["menu-allergy"][0]
+
+		query := "update menu set name=$2, serving_size=$3, ingredients=$4, tag=$5, allergy=$6 where id=$1"
+		_, err := database.DB.Exec(query, menuID, menuName, menuServingSize, menuIngredients, menuTag, menuAllergy)
+		if err != nil {
+			http.Error(w, "error when updating menu item", http.StatusInternalServerError)
+			return
+		}
+	}
+
+	existingMenuItem, err := getMenu(menuID)
+	if err != nil {
+		http.NotFound(w, r)
+		return
+	}
+
+	filepath := path.Join("views", "editItem.html")
+	tmpl, err := template.ParseFiles(filepath)
+
+	data := map[string]models.Menu{
+		"data": existingMenuItem[0],
+	}
+
+	tmpl.Execute(w, data)
 }
