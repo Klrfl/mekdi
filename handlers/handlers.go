@@ -140,8 +140,9 @@ func IndexHandler(w http.ResponseWriter, r *http.Request) {
 
 	switch r.Method {
 	case http.MethodGet:
-		filepath := path.Join("views", "index.html")
-		tmpl, err := template.ParseFiles(filepath)
+		mainPage := path.Join("views", "index.html")
+		layout := path.Join("views", "layouts", "baseLayout.html")
+		tmpl, err := template.ParseFiles(layout, mainPage)
 
 		if err != nil {
 			http.Error(w, "error when rendering frontend!", http.StatusInternalServerError)
@@ -160,6 +161,7 @@ func IndexHandler(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 		}
+
 	case http.MethodPost:
 		err := r.ParseForm()
 		if err != nil {
@@ -185,17 +187,16 @@ func IndexHandler(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 
-		filepath := path.Join("views", "newItem.html")
-		tmpl, err := template.ParseFiles(filepath)
+		mainPage := path.Join("views", "newItem.html")
+		layout := path.Join("views", "layouts", "baseLayout.html")
+		tmpl, err := template.ParseFiles(layout, mainPage)
+
 		if err != nil {
 			http.Error(w, "error when rendering frontend", http.StatusInternalServerError)
 			return
 		}
-
 		tmpl.Execute(w, nil)
-
 	}
-
 }
 
 func HandleMenuByID(w http.ResponseWriter, r *http.Request) {
@@ -215,8 +216,9 @@ func HandleMenuByID(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		filepath := path.Join("views", "menuItem.html")
-		tmpl, err := template.ParseFiles(filepath)
+		mainPage := path.Join("views", "menuItem.html")
+		layout := path.Join("views", "layouts", "baseLayout.html")
+		tmpl, err := template.ParseFiles(layout, mainPage)
 
 		if err != nil {
 			http.Error(w, "error when rendering frontend!", http.StatusInternalServerError)
