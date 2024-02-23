@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <title>Edit menu item</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link href="/assets/style.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/assets/edit.css" />
+  </head>
+
+  <body>
+    <main>
+      <h1>
+        <a href="/menu/{{.data.ID}}">{{.data.Name}}</a>
+      </h1>
+      <p>please wait i haven't implemented this feature yet</p>
+
+      <form action="/edit/{{.data.ID}}" method="post">
+        <label for="menu-name">Name</label>
+        <input
+          type="text"
+          name="menu-name"
+          id="menu-name"
+          value="{{.data.Name}}"
+          placeholder="hi"
+          required
+        />
+        <label for="menu-serving-size">Serving size</label>
+        <input
+          type="text"
+          name="menu-serving-size"
+          id="menu-serving-size"
+          value="{{.data.ServingSize}}"
+          placeholder="69ml"
+          required
+        />
+        <label for="menu-ingredients">Ingredients</label>
+        <input
+          type="text"
+          name="menu-ingredients"
+          id="menu-ingredients"
+          value="{{.data.Ingredients}}"
+          placeholder="idk man"
+        />
+
+        <label for="menu-tag">Tag</label>
+        <input
+          type="text"
+          name="menu-tag"
+          id="menu-tag"
+          value="{{.data.Tag}}"
+          placeholder="some tags"
+        />
+        <label for="menu-allergy">Allergy</label>
+        <input
+          type="text"
+          name="menu-allergy"
+          id="menu-allergy"
+          value="{{.data.Allergy}}"
+          placeholder="some allergies wtf does that even mean"
+        />
+
+        <button type="submit" class="submit-btn">Update menu item data</button>
+      </form>
+    </main>
+  </body>
+</html>
