@@ -45,3 +45,23 @@ main {
   color: inherit;
   text-decoration: none;
 }
+
+form :is(input, label),
+.submit-btn {
+  display: block;
+  width: 100%;
+}
+
+form label {
+  padding-block: 1rem 0.5rem;
+}
+
+form input,
+.submit-btn {
+  padding: 1rem;
+}
+
+.submit-btn {
+  margin-block-start: 1rem;
+  cursor: pointer;
+}

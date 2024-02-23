@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <title>Create new menu item</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link href="/assets/style.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/assets/new.css" />
+  </head>
+
+  <body>
+    <main>
+      <h1>Create new menu item</h1>
+      <form action="/new/" method="post">
+        <label for="menu-name">Name</label>
+        <input
+          type="text"
+          name="menu-name"
+          id="menu-name"
+          placeholder="delicious burger"
+          required
+        />
+
+        <label for="menu-serving-size">Serving size</label>
+        <input
+          type="text"
+          serving-size="menu-serving-size"
+          id="menu-serving-size"
+          placeholder="vegetables"
+          required
+        />
+
+        <label for="menu-ingredients">Ingredients</label>
+        <input
+          type="text"
+          ingredients="menu-ingredients"
+          id="menu-ingredients"
+          placeholder="ingredients"
+          required
+        />
+
+        <label for="menu-tag">Menu tag</label>
+        <input
+          type="text"
+          tag="menu-tag"
+          id="menu-tag"
+          placeholder="tags (WIP)"
+          required
+        />
+
+        <label for="menu-allergy">Menu allergy</label>
+        <input
+          type="text"
+          allergy="menu-allergy"
+          id="menu-allergy"
+          placeholder="allergy"
+          required
+        />
+
+        <button type="submit" class="submit-btn">Create new menu item</button>
+      </form>
+    </main>
+  </body>
+</html>
