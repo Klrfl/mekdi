@@ -1,3 +1,8 @@
+.success {
+  padding: 1rem;
+  outline: 2px solid green;
+}
+
 nav {
   outline: 1px solid;
   background: hsl(0 0 0 / 80%);

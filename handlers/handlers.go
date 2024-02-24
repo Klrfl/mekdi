@@ -229,9 +229,9 @@ func HandleMenu(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		// https://stackoverflow.com/questions/35934298/how-to-redirect-to-a-url
-		// thanks a lot !!!
-		http.Redirect(w, r, fmt.Sprintf("/menu/%s", menuID), http.StatusSeeOther)
+		successComponent := path.Join("views", "success.html")
+		tmpl := template.Must(template.ParseFiles(successComponent))
+		tmpl.Execute(w, nil)
 
 	case http.MethodDelete:
 		_, err = database.DB.Exec("delete from menu where id = $1", menuID)
@@ -255,6 +255,5 @@ func ServeNewMenuPage(w http.ResponseWriter, r *http.Request) {
 		newMenuItemPage := path.Join("views", "newItem.html")
 		tmpl := views.RenderPage(newMenuItemPage)
 		tmpl.Execute(w, nil)
-
 	}
 }
