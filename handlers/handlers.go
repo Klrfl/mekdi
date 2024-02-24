@@ -138,58 +138,25 @@ func IndexHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	switch r.Method {
-	case http.MethodGet:
-		page := path.Join("views", "index.html")
-		tmpl := views.RenderPage(page)
+	page := path.Join("views", "index.html")
+	tmpl := views.RenderPage(page)
 
-		menuList, err := getMenu()
-		if err != nil {
-			log.Println(err)
-		}
+	menuList, err := getMenu()
+	if err != nil {
+		log.Println(err)
+	}
 
-		data := map[string]interface{}{
-			"data": menuList,
-		}
+	data := map[string]interface{}{
+		"data": menuList,
+	}
 
-		err = tmpl.Execute(w, data)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-		}
-
-	case http.MethodPost:
-		err := r.ParseForm()
-		if err != nil {
-			http.Error(w, "error when parsing menu item data", http.StatusInternalServerError)
-		}
-
-		formData := r.Form
-		if len(formData) != 0 {
-			menuID := uuid.New()
-			menuName := formData.Get("menu-name")
-			menuServingSize := formData.Get("menu-serving-size")
-			menuIngredients := formData.Get("menu-ingredients")
-			menuTag := formData.Get("menu-tag")
-			menuAllergy := formData.Get("menu-allergy")
-
-			query := "insert into menu(id, name, serving_size, ingredients, tag, allergy) values($1, $2, $3, $4, $5, $6)"
-			_, err := database.DB.Exec(query, menuID, menuName, menuServingSize, menuIngredients, menuTag, menuAllergy)
-
-			if err != nil {
-				log.Println(err)
-				http.Error(w, "error when creating new menu item", http.StatusInternalServerError)
-				return
-			}
-		}
-
-		page := path.Join("views", "newItem.html")
-		tmpl := views.RenderPage(page)
-
-		tmpl.Execute(w, nil)
+	err = tmpl.Execute(w, data)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
 
-func HandleMenuByID(w http.ResponseWriter, r *http.Request) {
+func HandleMenu(w http.ResponseWriter, r *http.Request) {
 	IDParam := strings.TrimPrefix(r.URL.Path, "/menu/")
 	menuID, err := uuid.Parse(IDParam)
 
@@ -215,7 +182,6 @@ func HandleMenuByID(w http.ResponseWriter, r *http.Request) {
 
 		tmpl.Execute(w, data)
 
-	// create new menu item
 	case http.MethodPost:
 		err = r.ParseForm()
 		if err != nil {
@@ -250,5 +216,39 @@ func HandleMenuByID(w http.ResponseWriter, r *http.Request) {
 
 	default:
 		http.Error(w, "idk man, method not allowed I guess", http.StatusInternalServerError)
+	}
+}
+
+func ServeNewMenuPage(w http.ResponseWriter, r *http.Request) {
+	switch r.Method {
+	case http.MethodGet:
+		newMenuItemPage := path.Join("views", "newItem.html")
+		tmpl := views.RenderPage(newMenuItemPage)
+		tmpl.Execute(w, nil)
+
+	case http.MethodPost:
+		err := r.ParseForm()
+		if err != nil {
+			http.Error(w, "error when parsing menu item data", http.StatusInternalServerError)
+		}
+
+		formData := r.Form
+		menuID := uuid.New()
+		menuName := formData.Get("menu-name")
+		menuServingSize := formData.Get("menu-serving-size")
+		menuIngredients := formData.Get("menu-ingredients")
+		menuTag := formData.Get("menu-tag")
+		menuAllergy := formData.Get("menu-allergy")
+
+		query := "insert into menu(id, name, serving_size, ingredients, tag, allergy) values($1, $2, $3, $4, $5, $6)"
+		_, err = database.DB.Exec(query, menuID, menuName, menuServingSize, menuIngredients, menuTag, menuAllergy)
+
+		if err != nil {
+			log.Println(err)
+			http.Error(w, "error when creating new menu item", http.StatusInternalServerError)
+			return
+		}
+
+		http.Redirect(w, r, "/", http.StatusSeeOther)
 	}
 }

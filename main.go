@@ -13,7 +13,8 @@ func main() {
 	http.Handle("/assets/", http.StripPrefix("/assets/", http.FileServer(http.Dir("assets"))))
 
 	http.HandleFunc("/", handlers.IndexHandler)
-	http.HandleFunc("/menu/", handlers.HandleMenuByID)
+	http.HandleFunc("/menu/", handlers.HandleMenu)
+	http.HandleFunc("/menu/new/", handlers.ServeNewMenuPage)
 
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }
