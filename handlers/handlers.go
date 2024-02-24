@@ -3,6 +3,7 @@ package handlers
 import (
 	"database/sql"
 	"fmt"
+	"html/template"
 	"log"
 	"net/http"
 	"path"
@@ -183,6 +184,31 @@ func HandleMenu(w http.ResponseWriter, r *http.Request) {
 		tmpl.Execute(w, data)
 
 	case http.MethodPost:
+		err := r.ParseForm()
+		if err != nil {
+			http.Error(w, "error when parsing menu item data", http.StatusInternalServerError)
+		}
+
+		formData := r.Form
+		menuID := uuid.New()
+		menuName := formData.Get("menu-name")
+		menuServingSize := formData.Get("menu-serving-size")
+		menuIngredients := formData.Get("menu-ingredients")
+		menuTag := formData.Get("menu-tag")
+		menuAllergy := formData.Get("menu-allergy")
+
+		query := "insert into menu(id, name, serving_size, ingredients, tag, allergy) values($1, $2, $3, $4, $5, $6)"
+		_, err = database.DB.Exec(query, menuID, menuName, menuServingSize, menuIngredients, menuTag, menuAllergy)
+
+		if err != nil {
+			log.Println(err)
+			http.Error(w, "error when creating new menu item", http.StatusInternalServerError)
+			return
+		}
+
+		http.Redirect(w, r, "/", http.StatusSeeOther)
+
+	case http.MethodPatch:
 		err = r.ParseForm()
 		if err != nil {
 			http.Error(w, fmt.Sprintf("error processing form data: %s", err), http.StatusInternalServerError)
@@ -214,6 +240,10 @@ func HandleMenu(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
+		deletedPage := path.Join("views/deleted.html")
+		tmpl := template.Must(template.ParseFiles(deletedPage))
+		tmpl.Execute(w, nil)
+
 	default:
 		http.Error(w, "idk man, method not allowed I guess", http.StatusInternalServerError)
 	}
@@ -226,29 +256,5 @@ func ServeNewMenuPage(w http.ResponseWriter, r *http.Request) {
 		tmpl := views.RenderPage(newMenuItemPage)
 		tmpl.Execute(w, nil)
 
-	case http.MethodPost:
-		err := r.ParseForm()
-		if err != nil {
-			http.Error(w, "error when parsing menu item data", http.StatusInternalServerError)
-		}
-
-		formData := r.Form
-		menuID := uuid.New()
-		menuName := formData.Get("menu-name")
-		menuServingSize := formData.Get("menu-serving-size")
-		menuIngredients := formData.Get("menu-ingredients")
-		menuTag := formData.Get("menu-tag")
-		menuAllergy := formData.Get("menu-allergy")
-
-		query := "insert into menu(id, name, serving_size, ingredients, tag, allergy) values($1, $2, $3, $4, $5, $6)"
-		_, err = database.DB.Exec(query, menuID, menuName, menuServingSize, menuIngredients, menuTag, menuAllergy)
-
-		if err != nil {
-			log.Println(err)
-			http.Error(w, "error when creating new menu item", http.StatusInternalServerError)
-			return
-		}
-
-		http.Redirect(w, r, "/", http.StatusSeeOther)
 	}
 }
