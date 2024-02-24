@@ -1,7 +1,8 @@
 {{define "content"}}
 <main>
   <h1>Create new menu item</h1>
-  <form action="/menu/" method="post">
+  <!-- TODO: somehow use patch method and change action to /menu/ -->
+  <form action="/menu/new/" method="post">
     <label for="menu-name">Name</label>
     <input
       type="text"
@@ -49,7 +50,7 @@
       required
     />
 
-    <button type="submit" class="submit-btn">Create new menu item</button>
+    <button type="submit" class="btn submit-btn">Create new menu item</button>
   </form>
 </main>
 {{end}}
