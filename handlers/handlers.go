@@ -3,7 +3,6 @@ package handlers
 import (
 	"database/sql"
 	"fmt"
-	"html/template"
 	"log"
 	"net/http"
 	"path"
@@ -12,6 +11,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/klrfl/mekdi/database"
 	"github.com/klrfl/mekdi/models"
+	"github.com/klrfl/mekdi/views"
 )
 
 func getMenu(menuID ...uuid.UUID) ([]models.Menu, error) {
@@ -140,13 +140,8 @@ func IndexHandler(w http.ResponseWriter, r *http.Request) {
 
 	switch r.Method {
 	case http.MethodGet:
-		mainPage := path.Join("views", "index.html")
-		layout := path.Join("views", "layouts", "baseLayout.html")
-		tmpl, err := template.ParseFiles(layout, mainPage)
-
-		if err != nil {
-			http.Error(w, "error when rendering frontend!", http.StatusInternalServerError)
-		}
+		page := path.Join("views", "index.html")
+		tmpl := views.RenderPage(page)
 
 		menuList, err := getMenu()
 		if err != nil {
@@ -187,14 +182,9 @@ func IndexHandler(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 
-		mainPage := path.Join("views", "newItem.html")
-		layout := path.Join("views", "layouts", "baseLayout.html")
-		tmpl, err := template.ParseFiles(layout, mainPage)
+		page := path.Join("views", "newItem.html")
+		tmpl := views.RenderPage(page)
 
-		if err != nil {
-			http.Error(w, "error when rendering frontend", http.StatusInternalServerError)
-			return
-		}
 		tmpl.Execute(w, nil)
 	}
 }
@@ -216,13 +206,8 @@ func HandleMenuByID(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		mainPage := path.Join("views", "menuItem.html")
-		layout := path.Join("views", "layouts", "baseLayout.html")
-		tmpl, err := template.ParseFiles(layout, mainPage)
-
-		if err != nil {
-			http.Error(w, "error when rendering frontend!", http.StatusInternalServerError)
-		}
+		page := path.Join("views", "menuItem.html")
+		tmpl := views.RenderPage(page)
 
 		data := map[string]*models.Menu{
 			"data": &menuItem[0],

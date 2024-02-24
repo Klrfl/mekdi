@@ -24,6 +24,31 @@ body {
   margin: 0;
 }
 
+nav {
+  outline: 1px solid;
+  background: hsl(0 0 0 / 80%);
+  backdrop-filter: blur(0.5rem);
+
+  position: sticky;
+  top: 0;
+}
+
+nav ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  display: flex;
+}
+
+nav a {
+  color: inherit;
+  text-decoration: none;
+
+  display: block;
+  padding: 1rem;
+}
+
 main {
   width: calc(min(120ch, 100%) - 4rem);
   margin-inline: auto;
