@@ -1,3 +1,12 @@
+:root {
+  --blue: #525cea;
+}
+
+a {
+  color: var(--blue);
+  text-decoration: none;
+}
+
 .success {
   padding: 1rem;
   outline: 2px solid green;
@@ -22,7 +31,6 @@ nav ul {
 
 nav a {
   color: inherit;
-  text-decoration: none;
 
   display: block;
   padding: 1rem;
@@ -51,7 +59,7 @@ main {
 
 .menu-item a {
   color: inherit;
-  text-decoration: none;
+  display: block;
 }
 
 .menu__title {
@@ -68,6 +76,14 @@ main {
   display: none;
 }
 
+.btn {
+  outline: 1px solid var(--blue);
+}
+
+.btn--delete {
+  outline: 1px solid red;
+}
+
 form label {
   padding-block: 1rem 0.5rem;
 }
@@ -77,5 +93,7 @@ form input {
 }
 
 footer {
+  background: hsl(0 0 0 /20%);
+  color: #ddd;
   padding: 2rem;
 }

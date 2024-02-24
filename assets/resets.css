@@ -42,7 +42,7 @@ button:focus-visible {
 }
 
 button:active {
-  translate: 0 -0.2rem;
+  translate: 0 0.2rem;
 }
 
 .btn {
