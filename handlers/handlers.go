@@ -229,7 +229,7 @@ func HandleMenu(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		successComponent := path.Join("views", "success.html")
+		successComponent := path.Join("views", "components", "success.html")
 		tmpl := template.Must(template.ParseFiles(successComponent))
 		tmpl.Execute(w, nil)
 
@@ -240,7 +240,7 @@ func HandleMenu(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		deletedPage := path.Join("views/deleted.html")
+		deletedPage := path.Join("views", "components", "deleted.html")
 		tmpl := template.Must(template.ParseFiles(deletedPage))
 		tmpl.Execute(w, nil)
 
