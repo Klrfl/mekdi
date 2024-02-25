@@ -79,7 +79,7 @@ func getMenu(menuID ...uuid.UUID) ([]models.Menu, error) {
 
 	rows, err := database.DB.Query("select * from menu")
 	if err != nil {
-		return nil, fmt.Errorf("error when querying database")
+		return nil, fmt.Errorf(fmt.Sprintf("error when querying database: %s", err))
 	}
 
 	defer rows.Close()
@@ -144,7 +144,7 @@ func IndexHandler(w http.ResponseWriter, r *http.Request) {
 
 	menuList, err := getMenu()
 	if err != nil {
-		log.Println(err)
+		log.Println(fmt.Sprintf("error when getting menu: %s", err))
 	}
 
 	data := map[string]interface{}{
@@ -159,15 +159,14 @@ func IndexHandler(w http.ResponseWriter, r *http.Request) {
 
 func HandleMenu(w http.ResponseWriter, r *http.Request) {
 	IDParam := strings.TrimPrefix(r.URL.Path, "/menu/")
-	menuID, err := uuid.Parse(IDParam)
-
-	if err != nil {
-		http.NotFound(w, r)
-		return
-	}
+	menuID, UUIDerror := uuid.Parse(IDParam)
 
 	switch r.Method {
 	case http.MethodGet:
+		if UUIDerror != nil {
+			http.NotFound(w, r)
+		}
+
 		menuItem, err := getMenu(menuID)
 		if err == sql.ErrNoRows {
 			http.NotFound(w, r)
@@ -202,28 +201,33 @@ func HandleMenu(w http.ResponseWriter, r *http.Request) {
 
 		if err != nil {
 			log.Println(err)
-			http.Error(w, "error when creating new menu item", http.StatusInternalServerError)
+			http.Error(w, fmt.Sprintf("error when creating new menu item: %s", err), http.StatusInternalServerError)
 			return
 		}
 
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 
 	case http.MethodPatch:
-		err = r.ParseForm()
+		if UUIDerror != nil {
+			http.NotFound(w, r)
+		}
+
+		err := r.ParseForm()
 		if err != nil {
 			http.Error(w, fmt.Sprintf("error processing form data: %s", err), http.StatusInternalServerError)
 			return
 		}
 
 		formData := r.Form
-		menuName := formData["menu-name"][0]
-		menuServingSize := formData["menu-serving-size"][0]
-		menuIngredients := formData["menu-ingredients"][0]
-		menuTag := formData["menu-tag"][0]
-		menuAllergy := formData["menu-allergy"][0]
+		menuName := formData.Get("menu-name")
+		menuServingSize := formData.Get("menu-serving-size")
+		menuIngredients := formData.Get("menu-ingredients")
+		menuTag := formData.Get("menu-tag")
+		menuAllergy := formData.Get("menu-allergy")
 
 		query := "update menu set name=$2, serving_size=$3, ingredients=$4, tag=$5, allergy=$6 where id=$1"
-		_, err := database.DB.Exec(query, menuID, menuName, menuServingSize, menuIngredients, menuTag, menuAllergy)
+		_, err = database.DB.Exec(query, menuID, menuName, menuServingSize, menuIngredients, menuTag, menuAllergy)
+
 		if err != nil {
 			http.Error(w, "error when updating menu item", http.StatusInternalServerError)
 			return
@@ -234,14 +238,16 @@ func HandleMenu(w http.ResponseWriter, r *http.Request) {
 		tmpl.Execute(w, nil)
 
 	case http.MethodDelete:
-		_, err = database.DB.Exec("delete from menu where id = $1", menuID)
+		query := "delete from menu where id = $1"
+		_, err := database.DB.Exec(query, menuID)
+
 		if err != nil {
-			http.Error(w, "error when deleting menu item", http.StatusInternalServerError)
+			http.Error(w, fmt.Sprintf("error when deleting menu item: %s", err), http.StatusInternalServerError)
 			return
 		}
 
-		deletedPage := path.Join("views", "components", "deleted.html")
-		tmpl := template.Must(template.ParseFiles(deletedPage))
+		deletedComponent := path.Join("views", "components", "deleted.html")
+		tmpl := template.Must(template.ParseFiles(deletedComponent))
 		tmpl.Execute(w, nil)
 
 	default:
