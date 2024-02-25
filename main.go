@@ -1,10 +1,12 @@
 package main
 
 import (
-	"github.com/klrfl/mekdi/database"
-	"github.com/klrfl/mekdi/handlers"
+	"fmt"
 	"log"
 	"net/http"
+
+	"github.com/klrfl/mekdi/database"
+	"github.com/klrfl/mekdi/handlers"
 )
 
 func main() {
@@ -16,5 +18,11 @@ func main() {
 	http.HandleFunc("/menu/", handlers.HandleMenu)
 	http.HandleFunc("/menu/new/", handlers.ServeNewMenuPage)
 
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	port := "localhost:8080"
+
+	log.Println(fmt.Sprintf("server running at http://%s", port))
+	err := http.ListenAndServe(port, nil)
+	if err != nil {
+		log.Fatal("failed to start server")
+	}
 }
