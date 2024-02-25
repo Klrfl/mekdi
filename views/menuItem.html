@@ -1,10 +1,12 @@
 {{define "content"}}
 
-<main>
-  <section id="view-page">
+<section id="view-page" class="full-columns">
+  <header>
     <h1>{{.data.Name}}</h1>
     <p>{{.data.Description}}</p>
+  </header>
 
+  <article>
     <p>Serving size: {{.data.ServingSize}}</p>
     <p>ingredients:</p>
     <ul>
@@ -33,70 +35,70 @@
         Delete this menu item
       </button>
     </div>
-  </section>
+  </article>
+</section>
 
-  <section id="edit-page" class="hidden">
-    <div class="success" style="display: none"></div>
+<section id="edit-page" class="hidden full-columns">
+  <header>
+    <div class="success"></div>
     <h1>Edit menu item</h1>
-    <form
-      id="edit-form"
-      hx-patch="/menu/{{.data.ID}}"
-      hx-trigger="submit"
-      hx-target=".success"
-      hx-swap="outerHTML"
-    >
-      <label for="menu-name">Name</label>
-      <input
-        type="text"
-        name="menu-name"
-        id="menu-name"
-        value="{{.data.Name}}"
-        placeholder="hi"
-        required
-      />
-      <label for="menu-serving-size">Serving size</label>
-      <input
-        type="text"
-        name="menu-serving-size"
-        id="menu-serving-size"
-        value="{{.data.ServingSize}}"
-        placeholder="69ml"
-        required
-      />
-      <label for="menu-ingredients">Ingredients</label>
-      <input
-        type="text"
-        name="menu-ingredients"
-        id="menu-ingredients"
-        value="{{.data.Ingredients}}"
-        placeholder="idk man"
-      />
+  </header>
+  <form
+    id="edit-form"
+    hx-patch="/menu/{{.data.ID}}"
+    hx-trigger="submit"
+    hx-target=".success"
+    hx-swap="outerHTML"
+  >
+    <label for="menu-name">Name</label>
+    <input
+      type="text"
+      name="menu-name"
+      id="menu-name"
+      value="{{.data.Name}}"
+      placeholder="hi"
+      required
+    />
+    <label for="menu-serving-size">Serving size</label>
+    <input
+      type="text"
+      name="menu-serving-size"
+      id="menu-serving-size"
+      value="{{.data.ServingSize}}"
+      placeholder="69ml"
+      required
+    />
+    <label for="menu-ingredients">Ingredients</label>
+    <input
+      type="text"
+      name="menu-ingredients"
+      id="menu-ingredients"
+      value="{{.data.Ingredients}}"
+      placeholder="idk man"
+    />
 
-      <label for="menu-tag">Tag</label>
-      <input
-        type="text"
-        name="menu-tag"
-        id="menu-tag"
-        value="{{.data.Tag}}"
-        placeholder="some tags"
-      />
-      <label for="menu-allergy">Allergy</label>
-      <input
-        type="text"
-        name="menu-allergy"
-        id="menu-allergy"
-        value="{{.data.Allergy}}"
-        placeholder="some allergies wtf does that even mean"
-      />
+    <label for="menu-tag">Tag</label>
+    <input
+      type="text"
+      name="menu-tag"
+      id="menu-tag"
+      value="{{.data.Tag}}"
+      placeholder="some tags"
+    />
+    <label for="menu-allergy">Allergy</label>
+    <input
+      type="text"
+      name="menu-allergy"
+      id="menu-allergy"
+      value="{{.data.Allergy}}"
+      placeholder="some allergies wtf does that even mean"
+    />
 
-      <button type="submit" class="btn submit-btn">
-        Update menu item data
-      </button>
-    </form>
+    <button type="submit" class="btn submit-btn">Update menu item data</button>
+  </form>
 
-    <button class="btn edit-toggle">Go back</button>
-  </section>
-</main>
+  <button class="btn edit-toggle">Go back</button>
+</section>
 
 <script src="/assets/app.js"></script>
 {{end}}

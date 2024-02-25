@@ -1,9 +1,11 @@
 {{define "content"}}
-<main>
+<header class="full-columns">
   <h1>Hello there</h1>
   <p>this is my first go application rendering views</p>
+</header>
 
-  <ul class="menu-list">
+<section class="full-columns">
+  <ul class="menu-list odd-columns">
     {{range .data}}
     <li class="menu-item">
       <article>
@@ -21,5 +23,5 @@
     </li>
     {{end}}
   </ul>
-</main>
+</section>
 {{end}}

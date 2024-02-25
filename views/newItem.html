@@ -1,7 +1,9 @@
 {{define "content"}}
-<main>
-  <h1>Create new menu item</h1>
-  <!-- TODO: somehow use patch method and change action to /menu/ -->
+<section class="full-columns">
+  <header>
+    <h1>Create new menu item</h1>
+  </header>
+
   <form action="/menu/new/" method="post">
     <label for="menu-name">Name</label>
     <input
@@ -52,5 +54,5 @@
 
     <button type="submit" class="btn submit-btn">Create new menu item</button>
   </form>
-</main>
+</section>
 {{end}}

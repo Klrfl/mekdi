@@ -20,13 +20,15 @@
   <body>
     {{block "navbar" .}} {{end}}
 
-    <!-- content -->
-    {{block "content" .}}
-    <h1>Whoops</h1>
-    <p>No content here yet.</p>
-    {{end}}
+    <main class="main-grid">
+      {{block "content" .}}
+      <section class="full-columns">
+        <h1>Whoops</h1>
+        <p>No content here yet.</p>
+      </section>
+      {{end}}
+    </main>
 
-    <!-- footer -->
     {{block "footer" .}} {{end}}
   </body>
 </html>

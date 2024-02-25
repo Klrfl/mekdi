@@ -1,5 +1,6 @@
 :root {
   --blue: #525cea;
+  --column-count: 6;
 }
 
 a {
@@ -8,6 +9,7 @@ a {
 }
 
 .success {
+  display: none;
   padding: 1rem;
   outline: 2px solid green;
 }
@@ -36,9 +38,25 @@ nav a {
   padding: 1rem;
 }
 
-main {
-  width: calc(min(120ch, 100%) - 4rem);
+.main-grid {
+  /*   width: calc(min(120ch, 100%) - 4rem);
   margin-inline: auto;
+ */
+  display: grid;
+  grid-template-columns:
+    minmax(1rem, 1fr) repeat(var(--column-count), minmax(0, 10rem))
+    minmax(1rem, 1fr);
+}
+
+.main-grid > * {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: subgrid;
+  row-gap: 1rem;
+}
+
+.full-columns > * {
+  grid-column: 2 / span var(--column-count);
 }
 
 .menu-list {
