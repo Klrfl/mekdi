@@ -6,17 +6,12 @@ import (
 	"net/http"
 
 	"github.com/klrfl/mekdi/database"
-	"github.com/klrfl/mekdi/handlers"
+	"github.com/klrfl/mekdi/router"
 )
 
 func main() {
 	database.Init()
-
-	http.Handle("/assets/", http.StripPrefix("/assets/", http.FileServer(http.Dir("assets"))))
-
-	http.HandleFunc("/", handlers.IndexHandler)
-	http.HandleFunc("/menu/", handlers.HandleMenu)
-	http.HandleFunc("/menu/new/", handlers.ServeNewMenuPage)
+	router.SetupRoutes()
 
 	port := "localhost:8080"
 
