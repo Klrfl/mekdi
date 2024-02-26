@@ -201,7 +201,6 @@ func HandleMenu(w http.ResponseWriter, r *http.Request) {
 		_, err = database.DB.Exec(query, menuID, menuName, menuDescription, menuServingSize, menuIngredients, menuTag, menuAllergy)
 
 		if err != nil {
-			log.Println(err)
 			http.Error(w, fmt.Sprintf("error when creating new menu item: %s", err), http.StatusInternalServerError)
 			return
 		}
@@ -264,4 +263,68 @@ func ServeNewMenuPage(w http.ResponseWriter, r *http.Request) {
 		tmpl := views.RenderPage(newMenuItemPage)
 		tmpl.Execute(w, nil)
 	}
+}
+
+func HandleSearch(w http.ResponseWriter, r *http.Request) {
+	query := r.URL.Query().Get("query")
+
+	if query != "" {
+		var menuList []models.Menu
+		DBQuery := "select id, name, tag, serving_size, ingredients, description from menu where name ILIKE $1"
+		rows, err := database.DB.Query(DBQuery, fmt.Sprintf("%%%s%%", query))
+
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		var menuItem models.Menu
+		var servingSize sql.NullString
+		var ingredients sql.NullString
+		var tag sql.NullString
+		var description sql.NullString
+
+		for rows.Next() {
+			err := rows.Scan(
+				&menuItem.ID,
+				&menuItem.Name,
+				&tag,
+				&servingSize,
+				&ingredients,
+				&description,
+			)
+
+			if err != nil {
+				http.Error(w, fmt.Sprintf("error when getting menu items: %s", err.Error()), http.StatusInternalServerError)
+			}
+
+			if servingSize.Valid {
+				menuItem.ServingSize = servingSize.String
+			}
+			if ingredients.Valid {
+				menuItem.Ingredients = ingredients.String
+			}
+			if tag.Valid {
+				menuItem.Tag = tag.String
+			}
+			if description.Valid {
+				menuItem.Description = description.String
+			}
+			menuList = append(menuList, menuItem)
+		}
+
+		data := map[string][]models.Menu{
+			"data": menuList,
+		}
+
+		searchResultsComponent := path.Join("views", "components", "searchResults.html")
+		tmpl := template.Must(template.ParseFiles(searchResultsComponent))
+		tmpl.Execute(w, data)
+		return
+	}
+
+	searchPage := path.Join("views", "search.html")
+	tmpl := views.RenderPage(searchPage)
+	tmpl.Execute(w, nil)
+
 }
