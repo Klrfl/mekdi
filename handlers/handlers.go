@@ -77,7 +77,9 @@ func getMenu(menuID ...uuid.UUID) ([]models.Menu, error) {
 		return menuList, nil
 	}
 
-	rows, err := database.DB.Query("select * from menu")
+	query := "select * from menu"
+	rows, err := database.DB.Query(query)
+
 	if err != nil {
 		return nil, fmt.Errorf(fmt.Sprintf("error when querying database: %s", err))
 	}
@@ -235,7 +237,7 @@ func HandleMenu(w http.ResponseWriter, r *http.Request) {
 		_, err = database.DB.Exec(query, menuID, menuName, menuDescription, menuServingSize, menuIngredients, menuTag, menuAllergy)
 
 		if err != nil {
-			http.Error(w, "error when updating menu item", http.StatusInternalServerError)
+			http.Error(w, fmt.Sprintf("error when updating menu item: %s", err), http.StatusInternalServerError)
 			return
 		}
 
@@ -331,5 +333,4 @@ func HandleSearch(w http.ResponseWriter, r *http.Request) {
 	searchPage := path.Join("views", "search.html")
 	tmpl := views.RenderPage(searchPage)
 	tmpl.Execute(w, nil)
-
 }
