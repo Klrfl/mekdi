@@ -191,13 +191,14 @@ func HandleMenu(w http.ResponseWriter, r *http.Request) {
 		formData := r.Form
 		menuID := uuid.New()
 		menuName := formData.Get("menu-name")
+		menuDescription := formData.Get("menu-description")
 		menuServingSize := formData.Get("menu-serving-size")
 		menuIngredients := formData.Get("menu-ingredients")
 		menuTag := formData.Get("menu-tag")
 		menuAllergy := formData.Get("menu-allergy")
 
-		query := "insert into menu(id, name, serving_size, ingredients, tag, allergy) values($1, $2, $3, $4, $5, $6)"
-		_, err = database.DB.Exec(query, menuID, menuName, menuServingSize, menuIngredients, menuTag, menuAllergy)
+		query := "insert into menu(id, name, description, serving_size, ingredients, tag, allergy) values($1, $2, $3, $4, $5, $6, $7)"
+		_, err = database.DB.Exec(query, menuID, menuName, menuDescription, menuServingSize, menuIngredients, menuTag, menuAllergy)
 
 		if err != nil {
 			log.Println(err)
@@ -220,13 +221,14 @@ func HandleMenu(w http.ResponseWriter, r *http.Request) {
 
 		formData := r.Form
 		menuName := formData.Get("menu-name")
+		menuDescription := formData.Get("menu-description")
 		menuServingSize := formData.Get("menu-serving-size")
 		menuIngredients := formData.Get("menu-ingredients")
 		menuTag := formData.Get("menu-tag")
 		menuAllergy := formData.Get("menu-allergy")
 
-		query := "update menu set name=$2, serving_size=$3, ingredients=$4, tag=$5, allergy=$6 where id=$1"
-		_, err = database.DB.Exec(query, menuID, menuName, menuServingSize, menuIngredients, menuTag, menuAllergy)
+		query := "update menu set name=$2, description=$3, serving_size=$4, ingredients=$5, tag=$6, allergy=$7 where id=$1"
+		_, err = database.DB.Exec(query, menuID, menuName, menuDescription, menuServingSize, menuIngredients, menuTag, menuAllergy)
 
 		if err != nil {
 			http.Error(w, "error when updating menu item", http.StatusInternalServerError)

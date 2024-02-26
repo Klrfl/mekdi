@@ -105,8 +105,13 @@ form label {
   padding-block: 1rem 0.5rem;
 }
 
-form input {
+form :is(input, textarea) {
   padding: 1rem;
+}
+
+form textarea {
+  width: 100%;
+  height: auto;
 }
 
 footer {
