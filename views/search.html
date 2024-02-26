@@ -1,0 +1,20 @@
+{{define "content"}}
+<section class="full-columns">
+  <header>
+    <h1>Search</h1>
+
+    <form hx-get="/search" hx-target="#search-results">
+      <input
+        type="text"
+        id="query"
+        name="query"
+        placeholder="search for a menu item"
+      />
+
+      <button type="submit" class="btn">Search</button>
+    </form>
+  </header>
+
+  <ul id="search-results" class="menu-list"></ul>
+</section>
+{{end}}

@@ -3,6 +3,13 @@
   --column-count: 6;
 }
 
+body {
+  min-height: 100vh;
+
+  display: flex;
+  flex-direction: column;
+}
+
 a {
   color: var(--blue);
   text-decoration: none;
@@ -38,9 +45,7 @@ nav a {
 }
 
 .main-grid {
-  /*   width: calc(min(120ch, 100%) - 4rem);
-  margin-inline: auto;
- */
+  flex-grow: 1;
   display: grid;
   grid-template-columns:
     minmax(1rem, 1fr) repeat(var(--column-count), minmax(0, 10rem))

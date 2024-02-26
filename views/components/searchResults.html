@@ -1,0 +1,21 @@
+{{range .data}}
+<li class="menu-item">
+  <article>
+    <a href="/menu/{{.ID}}">
+      <h2 class="menu__title">{{.Name}}</h2>
+      <p class="menu__tag">{{.Tag}}</p>
+      <p>{{.ServingSize}}</p>
+      <!-- TODO: switch to ul -->
+      <ul>
+        <li>{{.Ingredients}}</li>
+      </ul>
+      <p>{{.Description}}</p>
+    </a>
+  </article>
+</li>
+{{end}}
+
+<!-- empty -->
+{{if not .data}}
+<li>we can't find what you're looking for.</li>
+{{end}}
