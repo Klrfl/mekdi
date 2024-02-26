@@ -135,7 +135,8 @@ func getMenu(menuID ...uuid.UUID) ([]models.Menu, error) {
 
 func IndexHandler(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/" {
-		http.NotFound(w, r)
+		tmpl := views.Render404()
+		tmpl.Execute(w, nil)
 		return
 	}
 
@@ -164,12 +165,14 @@ func HandleMenu(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case http.MethodGet:
 		if UUIDerror != nil {
-			http.NotFound(w, r)
+			tmpl := views.Render404()
+			tmpl.Execute(w, nil)
 		}
 
 		menuItem, err := getMenu(menuID)
 		if err == sql.ErrNoRows {
-			http.NotFound(w, r)
+			tmpl := views.Render404()
+			tmpl.Execute(w, nil)
 			return
 		}
 
@@ -209,7 +212,9 @@ func HandleMenu(w http.ResponseWriter, r *http.Request) {
 
 	case http.MethodPatch:
 		if UUIDerror != nil {
-			http.NotFound(w, r)
+			tmpl := views.Render404()
+			tmpl.Execute(w, nil)
+			return
 		}
 
 		err := r.ParseForm()

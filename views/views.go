@@ -11,3 +11,9 @@ func RenderPage(file string) *template.Template {
 	footer := path.Join("views", "components", "footer.html")
 	return template.Must(template.ParseFiles(layout, navbar, footer, file))
 }
+
+func Render404() *template.Template {
+	page := path.Join("views", "404.html")
+	tmpl := RenderPage(page)
+	return tmpl
+}
