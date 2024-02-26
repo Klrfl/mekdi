@@ -3,7 +3,12 @@
   <header>
     <h1>Search</h1>
 
-    <form hx-get="/search" hx-target="#search-results">
+    <form
+      hx-get="/search"
+      hx-target="#search-results"
+      hx-indicator="#indicator"
+      hx-disabled-elt="button.btn"
+    >
       <input
         type="text"
         id="query"
@@ -15,6 +20,9 @@
     </form>
   </header>
 
-  <ul id="search-results" class="menu-list"></ul>
+  <ul id="search-results" class="menu-list">
+    <li>Your search results will appear here.</li>
+  </ul>
+  <p id="indicator" class="htmx-indicator">Please be patient...</p>
 </section>
 {{end}}
