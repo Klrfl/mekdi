@@ -109,11 +109,6 @@ form :is(input, textarea) {
   padding: 1rem;
 }
 
-form textarea {
-  width: 100%;
-  height: auto;
-}
-
 footer {
   background: hsl(0 0 0 /20%);
   color: #ddd;
