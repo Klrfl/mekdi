@@ -19,17 +19,9 @@ func getMenu(menuID ...uuid.UUID) ([]models.Menu, error) {
 	var menuList []models.Menu
 
 	menu := models.Menu{
-		ServingSize: "",
-		Ingredients: "",
-		Allergy:     "",
-		Tag:         "",
 		Description: "",
 	}
 
-	var servingSize sql.NullString
-	var ingredients sql.NullString
-	var tag sql.NullString
-	var allergy sql.NullString
 	var description sql.NullString
 
 	if len(menuID) == 1 {
@@ -37,10 +29,10 @@ func getMenu(menuID ...uuid.UUID) ([]models.Menu, error) {
 
 		if err := row.Scan(
 			&menu.Name,
-			&servingSize,
-			&ingredients,
-			&tag,
-			&allergy,
+			&menu.ServingSize,
+			&menu.Ingredients,
+			&menu.Tag,
+			&menu.Allergy,
 			&menu.Energy,
 			&menu.Protein,
 			&menu.TotalFat,
@@ -57,18 +49,6 @@ func getMenu(menuID ...uuid.UUID) ([]models.Menu, error) {
 			return nil, err
 		}
 
-		if servingSize.Valid {
-			menu.ServingSize = servingSize.String
-		}
-		if ingredients.Valid {
-			menu.Ingredients = ingredients.String
-		}
-		if tag.Valid {
-			menu.Tag = tag.String
-		}
-		if allergy.Valid {
-			menu.Allergy = allergy.String
-		}
 		if description.Valid {
 			menu.Description = description.String
 		}
@@ -77,8 +57,8 @@ func getMenu(menuID ...uuid.UUID) ([]models.Menu, error) {
 		return menuList, nil
 	}
 
-	query := "select * from menu"
-	rows, err := database.DB.Query(query)
+	DBQuery := "select * from menu"
+	rows, err := database.DB.Query(DBQuery)
 
 	if err != nil {
 		return nil, fmt.Errorf(fmt.Sprintf("error when querying database: %s", err))
@@ -89,10 +69,10 @@ func getMenu(menuID ...uuid.UUID) ([]models.Menu, error) {
 	for rows.Next() {
 		if err := rows.Scan(
 			&menu.Name,
-			&servingSize,
-			&ingredients,
-			&tag,
-			&allergy,
+			&menu.ServingSize,
+			&menu.Ingredients,
+			&menu.Tag,
+			&menu.Allergy,
 			&menu.Energy,
 			&menu.Protein,
 			&menu.TotalFat,
@@ -109,18 +89,6 @@ func getMenu(menuID ...uuid.UUID) ([]models.Menu, error) {
 			return nil, err
 		}
 
-		if servingSize.Valid {
-			menu.ServingSize = servingSize.String
-		}
-		if ingredients.Valid {
-			menu.Ingredients = ingredients.String
-		}
-		if tag.Valid {
-			menu.Tag = tag.String
-		}
-		if allergy.Valid {
-			menu.Allergy = allergy.String
-		}
 		if description.Valid {
 			menu.Description = description.String
 		}
@@ -288,34 +256,22 @@ func HandleSearch(w http.ResponseWriter, r *http.Request) {
 		}
 
 		var menuItem models.Menu
-		var servingSize sql.NullString
-		var ingredients sql.NullString
-		var tag sql.NullString
 		var description sql.NullString
 
 		for rows.Next() {
 			err := rows.Scan(
 				&menuItem.ID,
 				&menuItem.Name,
-				&tag,
-				&servingSize,
-				&ingredients,
-				&description,
+				&menuItem.Tag,
+				&menuItem.ServingSize,
+				&menuItem.Ingredients,
+				&menuItem.Description,
 			)
 
 			if err != nil {
 				http.Error(w, fmt.Sprintf("error when getting menu items: %s", err.Error()), http.StatusInternalServerError)
 			}
 
-			if servingSize.Valid {
-				menuItem.ServingSize = servingSize.String
-			}
-			if ingredients.Valid {
-				menuItem.Ingredients = ingredients.String
-			}
-			if tag.Valid {
-				menuItem.Tag = tag.String
-			}
 			if description.Valid {
 				menuItem.Description = description.String
 			}
