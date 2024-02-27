@@ -61,7 +61,7 @@ func getMenu(menuID ...uuid.UUID) ([]models.Menu, error) {
 	rows, err := database.DB.Query(DBQuery)
 
 	if err != nil {
-		return nil, fmt.Errorf(fmt.Sprintf("error when querying database: %s", err))
+		return nil, fmt.Errorf("error when querying database: %s", err)
 	}
 
 	defer rows.Close()
@@ -96,7 +96,7 @@ func getMenu(menuID ...uuid.UUID) ([]models.Menu, error) {
 		menuList = append(menuList, menu)
 	}
 
-	if err := rows.Err(); err != nil {
+	if err := rows.Err(); err == sql.ErrNoRows {
 		return nil, err
 	}
 
@@ -115,7 +115,7 @@ func IndexHandler(w http.ResponseWriter, r *http.Request) {
 
 	menuList, err := getMenu()
 	if err != nil {
-		log.Println(fmt.Sprintf("error when getting menu: %s", err))
+		log.Println(fmt.Errorf("error when getting menu: %s", err))
 	}
 
 	data := map[string]interface{}{
@@ -160,7 +160,7 @@ func HandleMenu(w http.ResponseWriter, r *http.Request) {
 	case http.MethodPost:
 		err := r.ParseForm()
 		if err != nil {
-			http.Error(w, "error when parsing menu item data", http.StatusInternalServerError)
+			http.Error(w, fmt.Sprintf("error when parsing menu item data %s", err), http.StatusInternalServerError)
 		}
 
 		formData := r.Form
@@ -269,7 +269,7 @@ func HandleSearch(w http.ResponseWriter, r *http.Request) {
 			)
 
 			if err != nil {
-				http.Error(w, fmt.Sprintf("error when getting menu items: %s", err.Error()), http.StatusInternalServerError)
+				http.Error(w, fmt.Sprintf("error when getting menu items: %s", err), http.StatusInternalServerError)
 			}
 
 			if description.Valid {
