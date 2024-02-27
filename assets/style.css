@@ -5,11 +5,17 @@
 
 body {
   min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
 a {
   color: var(--blue);
   text-decoration: none;
+}
+
+button {
+  background: hsl(0 0 0 / 20%);
 }
 
 .success {
@@ -39,6 +45,12 @@ nav a {
 
   display: block;
   padding: 1rem;
+}
+
+h1 {
+  font-size: 3rem;
+  line-height: 0.9;
+  margin-block: 1rem 0.5rem;
 }
 
 .main-grid {
@@ -96,10 +108,18 @@ nav a {
 
 .btn {
   outline: 1px solid var(--blue);
+  padding: 1rem;
+  margin-block: 1rem;
+  border-radius: 0.5rem;
 }
 
 .btn--delete {
   outline: 1px solid red;
+}
+
+.btn--submit {
+  width: 100%;
+  text-align: center;
 }
 
 form label {
@@ -108,10 +128,19 @@ form label {
 
 form :is(input, textarea) {
   padding: 1rem;
+  border-radius: 0.5rem;
 }
 
 footer {
   background: hsl(0 0 0 /20%);
   color: #ddd;
   padding: 2rem;
+
+  margin-block-start: auto;
+}
+
+.search-form {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
