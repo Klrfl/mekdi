@@ -1,7 +1,11 @@
 {{define "content"}}
 <header class="full-columns">
   <h1>{{.title}}</h1>
-  <p>this is my first go application rendering views</p>
+  <p>
+    Hello there. This is a very simple CRUD app, but also my first Go
+    application rendering HTML views. Click on the links in the navbar, or these
+    menu items to get started
+  </p>
 </header>
 
 <section class="full-columns">
@@ -13,7 +17,7 @@
           <h2 class="menu__title">{{.Name}}</h2>
           <p class="menu__tag">{{.Tag}}</p>
           <p>{{.ServingSize}}</p>
-          <!-- TODO: switch to ul -->
+          <!-- TODO: switch actual list -->
           <ul>
             <li>{{.Ingredients}}</li>
           </ul>
