@@ -33,7 +33,6 @@ button {
   all: unset;
   box-sizing: inherit;
   display: block;
-  background: hsl(0 0 0 / 20%);
   cursor: pointer;
 }
 
@@ -45,17 +44,12 @@ button:active {
   translate: 0 0.2rem;
 }
 
-.btn {
-  padding: 1rem;
-  margin-block: 1rem;
-  border-radius: 0.5rem;
-}
-
 input,
 button,
 textarea,
 select {
   font: inherit;
+  border: none;
 }
 
 textarea {
