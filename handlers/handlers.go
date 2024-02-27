@@ -151,7 +151,8 @@ func IndexHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	data := map[string]interface{}{
-		"data": menuList,
+		"title": "McD App",
+		"data":  menuList,
 	}
 
 	err = tmpl.Execute(w, data)
@@ -181,8 +182,9 @@ func HandleMenu(w http.ResponseWriter, r *http.Request) {
 		page := path.Join("views", "menuItem.html")
 		tmpl := views.RenderPage(page)
 
-		data := map[string]*models.Menu{
-			"data": &menuItem[0],
+		data := map[string]interface{}{
+			"title": fmt.Sprintf("%s – Mcd App", menuItem[0].Name),
+			"data":  &menuItem[0],
 		}
 
 		tmpl.Execute(w, data)
@@ -330,7 +332,11 @@ func HandleSearch(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	data := map[string]interface{}{
+		"title": "Search",
+	}
+
 	searchPage := path.Join("views", "search.html")
 	tmpl := views.RenderPage(searchPage)
-	tmpl.Execute(w, nil)
+	tmpl.Execute(w, data)
 }
