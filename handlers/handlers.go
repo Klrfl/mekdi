@@ -119,7 +119,7 @@ func IndexHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	data := map[string]interface{}{
-		"title": "McD App",
+		"title": "Mekdi App",
 		"data":  menuList,
 	}
 
@@ -151,7 +151,7 @@ func HandleMenu(w http.ResponseWriter, r *http.Request) {
 		tmpl := views.RenderPage(page)
 
 		data := map[string]interface{}{
-			"title": fmt.Sprintf("%s – Mcd App", menuItem[0].Name),
+			"title": fmt.Sprintf("%s – Mekdi App", menuItem[0].Name),
 			"data":  &menuItem[0],
 		}
 
