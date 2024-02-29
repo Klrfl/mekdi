@@ -180,7 +180,7 @@ func HandleMenu(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		http.Redirect(w, r, "/", http.StatusSeeOther)
+		http.Redirect(w, r, fmt.Sprintf("/menu/%s", menuID), http.StatusSeeOther)
 
 	case http.MethodPatch:
 		if UUIDerror != nil {

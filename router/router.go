@@ -13,5 +13,4 @@ func SetupRoutes() {
 	http.HandleFunc("/menu/", handlers.HandleMenu)
 	http.HandleFunc("/menu/new/", handlers.ServeNewMenuPage)
 	http.HandleFunc("/search", handlers.HandleSearch)
-
 }
