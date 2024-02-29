@@ -18,6 +18,6 @@ func main() {
 	log.Println(fmt.Sprintf("server running at http://%s", port))
 	err := http.ListenAndServe(port, nil)
 	if err != nil {
-		log.Fatal("failed to start server")
+		log.Fatal(fmt.Sprintf("failed to start server: %s", err))
 	}
 }
