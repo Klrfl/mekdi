@@ -173,7 +173,7 @@ func HandleMenu(w http.ResponseWriter, r *http.Request) {
 		menuAllergy := formData.Get("menu-allergy")
 
 		query := "insert into menu(id, name, description, serving_size, ingredients, tag, allergy) values($1, $2, $3, $4, $5, $6, $7)"
-		_, err = database.DB.Exec(query, menuID, menuName, menuDescription, menuServingSize, menuIngredients, menuTag, menuAllergy)
+		_, err = database.DB.Exec(query, menuID, menuName, strings.TrimSpace(menuDescription), menuServingSize, menuIngredients, menuTag, menuAllergy)
 
 		if err != nil {
 			http.Error(w, fmt.Sprintf("error when creating new menu item: %s", err), http.StatusInternalServerError)
