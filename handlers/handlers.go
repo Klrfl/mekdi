@@ -129,108 +129,115 @@ func IndexHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func HandleMenu(w http.ResponseWriter, r *http.Request) {
+func GetMenu(w http.ResponseWriter, r *http.Request) {
 	IDParam := strings.TrimPrefix(r.URL.Path, "/menu/")
 	menuID, UUIDerror := uuid.Parse(IDParam)
 
-	switch r.Method {
-	case http.MethodGet:
-		if UUIDerror != nil {
-			tmpl := views.Render404()
-			tmpl.Execute(w, nil)
-		}
-
-		menuItem, err := getMenu(menuID)
-		if err == sql.ErrNoRows {
-			tmpl := views.Render404()
-			tmpl.Execute(w, nil)
-			return
-		}
-
-		page := path.Join("views", "menuItem.html")
-		tmpl := views.RenderPage(page)
-
-		data := map[string]interface{}{
-			"title": fmt.Sprintf("%s – Mekdi App", menuItem[0].Name),
-			"data":  &menuItem[0],
-		}
-
-		tmpl.Execute(w, data)
-
-	case http.MethodPost:
-		err := r.ParseForm()
-		if err != nil {
-			http.Error(w, fmt.Sprintf("error when parsing menu item data %s", err), http.StatusInternalServerError)
-		}
-
-		formData := r.Form
-		menuID := uuid.New()
-		menuName := formData.Get("menu-name")
-		menuDescription := formData.Get("menu-description")
-		menuServingSize := formData.Get("menu-serving-size")
-		menuIngredients := formData.Get("menu-ingredients")
-		menuTag := formData.Get("menu-tag")
-		menuAllergy := formData.Get("menu-allergy")
-
-		query := "insert into menu(id, name, description, serving_size, ingredients, tag, allergy) values($1, $2, $3, $4, $5, $6, $7)"
-		_, err = database.DB.Exec(query, menuID, menuName, strings.TrimSpace(menuDescription), menuServingSize, menuIngredients, menuTag, menuAllergy)
-
-		if err != nil {
-			http.Error(w, fmt.Sprintf("error when creating new menu item: %s", err), http.StatusInternalServerError)
-			return
-		}
-
-		http.Redirect(w, r, fmt.Sprintf("/menu/%s", menuID), http.StatusSeeOther)
-
-	case http.MethodPatch:
-		if UUIDerror != nil {
-			tmpl := views.Render404()
-			tmpl.Execute(w, nil)
-			return
-		}
-
-		err := r.ParseForm()
-		if err != nil {
-			http.Error(w, fmt.Sprintf("error processing form data: %s", err), http.StatusInternalServerError)
-			return
-		}
-
-		formData := r.Form
-		menuName := formData.Get("menu-name")
-		menuDescription := formData.Get("menu-description")
-		menuServingSize := formData.Get("menu-serving-size")
-		menuIngredients := formData.Get("menu-ingredients")
-		menuTag := formData.Get("menu-tag")
-		menuAllergy := formData.Get("menu-allergy")
-
-		query := "update menu set name=$2, description=$3, serving_size=$4, ingredients=$5, tag=$6, allergy=$7 where id=$1"
-		_, err = database.DB.Exec(query, menuID, menuName, menuDescription, menuServingSize, menuIngredients, menuTag, menuAllergy)
-
-		if err != nil {
-			http.Error(w, fmt.Sprintf("error when updating menu item: %s", err), http.StatusInternalServerError)
-			return
-		}
-
-		successComponent := path.Join("views", "components", "success.html")
-		tmpl := template.Must(template.ParseFiles(successComponent))
+	if UUIDerror != nil {
+		tmpl := views.Render404()
 		tmpl.Execute(w, nil)
-
-	case http.MethodDelete:
-		query := "delete from menu where id = $1"
-		_, err := database.DB.Exec(query, menuID)
-
-		if err != nil {
-			http.Error(w, fmt.Sprintf("error when deleting menu item: %s", err), http.StatusInternalServerError)
-			return
-		}
-
-		deletedComponent := path.Join("views", "components", "deleted.html")
-		tmpl := template.Must(template.ParseFiles(deletedComponent))
-		tmpl.Execute(w, nil)
-
-	default:
-		http.Error(w, "idk man, method not allowed I guess", http.StatusInternalServerError)
 	}
+
+	menuItem, err := getMenu(menuID)
+	if err == sql.ErrNoRows {
+		tmpl := views.Render404()
+		tmpl.Execute(w, nil)
+		return
+	}
+
+	page := path.Join("views", "menuItem.html")
+	tmpl := views.RenderPage(page)
+
+	data := map[string]interface{}{
+		"title": fmt.Sprintf("%s – Mekdi App", menuItem[0].Name),
+		"data":  &menuItem[0],
+	}
+
+	tmpl.Execute(w, data)
+}
+
+func CreateNewMenu(w http.ResponseWriter, r *http.Request) {
+	err := r.ParseForm()
+	if err != nil {
+		http.Error(w, fmt.Sprintf("error when parsing menu item data %s", err), http.StatusInternalServerError)
+	}
+
+	formData := r.Form
+	menuID := uuid.New()
+	menuName := formData.Get("menu-name")
+	menuDescription := formData.Get("menu-description")
+	menuServingSize := formData.Get("menu-serving-size")
+	menuIngredients := formData.Get("menu-ingredients")
+	menuTag := formData.Get("menu-tag")
+	menuAllergy := formData.Get("menu-allergy")
+
+	query := "insert into menu(id, name, description, serving_size, ingredients, tag, allergy) values($1, $2, $3, $4, $5, $6, $7)"
+	_, err = database.DB.Exec(query, menuID, menuName, strings.TrimSpace(menuDescription), menuServingSize, menuIngredients, menuTag, menuAllergy)
+
+	if err != nil {
+		http.Error(w, fmt.Sprintf("error when creating new menu item: %s", err), http.StatusInternalServerError)
+		return
+	}
+
+	http.Redirect(w, r, fmt.Sprintf("/menu/%s", menuID), http.StatusSeeOther)
+}
+
+func EditMenuItem(w http.ResponseWriter, r *http.Request) {
+	IDParam := strings.TrimPrefix(r.URL.Path, "/menu/")
+	menuID, UUIDerror := uuid.Parse(IDParam)
+
+	if UUIDerror != nil {
+		tmpl := views.Render404()
+		tmpl.Execute(w, nil)
+		return
+	}
+
+	err := r.ParseForm()
+	if err != nil {
+		http.Error(w, fmt.Sprintf("error processing form data: %s", err), http.StatusInternalServerError)
+		return
+	}
+
+	formData := r.Form
+	menuName := formData.Get("menu-name")
+	menuDescription := formData.Get("menu-description")
+	menuServingSize := formData.Get("menu-serving-size")
+	menuIngredients := formData.Get("menu-ingredients")
+	menuTag := formData.Get("menu-tag")
+	menuAllergy := formData.Get("menu-allergy")
+
+	query := "update menu set name=$2, description=$3, serving_size=$4, ingredients=$5, tag=$6, allergy=$7 where id=$1"
+	_, err = database.DB.Exec(query, menuID, menuName, menuDescription, menuServingSize, menuIngredients, menuTag, menuAllergy)
+
+	if err != nil {
+		http.Error(w, fmt.Sprintf("error when updating menu item: %s", err), http.StatusInternalServerError)
+		return
+	}
+
+	successComponent := path.Join("views", "components", "success.html")
+	tmpl := template.Must(template.ParseFiles(successComponent))
+	tmpl.Execute(w, nil)
+}
+
+func DeleteMenu(w http.ResponseWriter, r *http.Request) {
+	IDParam := strings.TrimPrefix(r.URL.Path, "/menu/")
+	menuID, UUIDerror := uuid.Parse(IDParam)
+	if UUIDerror != nil {
+		http.Error(w, fmt.Sprintf("error when processing menu ID", UUIDerror), http.StatusBadRequest)
+		return
+	}
+
+	query := "delete from menu where id = $1"
+	_, err := database.DB.Exec(query, menuID)
+
+	if err != nil {
+		http.Error(w, fmt.Sprintf("error when deleting menu item: %s", err), http.StatusInternalServerError)
+		return
+	}
+
+	deletedComponent := path.Join("views", "components", "deleted.html")
+	tmpl := template.Must(template.ParseFiles(deletedComponent))
+	tmpl.Execute(w, nil)
 }
 
 func ServeNewMenuPage(w http.ResponseWriter, r *http.Request) {

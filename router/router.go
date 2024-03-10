@@ -6,11 +6,18 @@ import (
 	"github.com/klrfl/mekdi/handlers"
 )
 
-func SetupRoutes() {
-	http.Handle("/assets/", http.StripPrefix("/assets/", http.FileServer(http.Dir("assets"))))
+func SetupRoutes() *http.ServeMux {
+	mux := http.NewServeMux()
+	mux.Handle("GET /assets/", http.StripPrefix("/assets/", http.FileServer(http.Dir("assets"))))
 
-	http.HandleFunc("/", handlers.IndexHandler)
-	http.HandleFunc("/menu/", handlers.HandleMenu)
-	http.HandleFunc("/menu/new/", handlers.ServeNewMenuPage)
-	http.HandleFunc("/search", handlers.HandleSearch)
+	mux.HandleFunc("GET /", handlers.IndexHandler)
+
+	mux.HandleFunc("GET /menu/", handlers.GetMenu)
+	mux.HandleFunc("DELETE /menu/", handlers.DeleteMenu)
+	mux.HandleFunc("POST /menu/", handlers.CreateNewMenu)
+	mux.HandleFunc("PATCH /menu/", handlers.EditMenuItem)
+
+	mux.HandleFunc("GET /menu/new/", handlers.ServeNewMenuPage)
+	mux.HandleFunc("GET /search/", handlers.HandleSearch)
+	return mux
 }
