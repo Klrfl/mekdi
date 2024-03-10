@@ -12,8 +12,8 @@ func SetupRoutes() *http.ServeMux {
 
 	mux.HandleFunc("GET /", handlers.IndexHandler)
 
-	mux.HandleFunc("GET /menu/", handlers.GetMenu)
-	mux.HandleFunc("DELETE /menu/", handlers.DeleteMenu)
+	mux.HandleFunc("GET /menu/{id}", handlers.GetMenu)
+	mux.HandleFunc("DELETE /menu/{id}", handlers.DeleteMenu)
 	mux.HandleFunc("POST /menu/", handlers.CreateNewMenu)
 	mux.HandleFunc("PATCH /menu/", handlers.EditMenuItem)
 

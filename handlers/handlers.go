@@ -130,8 +130,7 @@ func IndexHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetMenu(w http.ResponseWriter, r *http.Request) {
-	IDParam := strings.TrimPrefix(r.URL.Path, "/menu/")
-	menuID, UUIDerror := uuid.Parse(IDParam)
+	menuID, UUIDerror := uuid.Parse(r.PathValue("id"))
 
 	if UUIDerror != nil {
 		tmpl := views.Render404()
@@ -220,8 +219,7 @@ func EditMenuItem(w http.ResponseWriter, r *http.Request) {
 }
 
 func DeleteMenu(w http.ResponseWriter, r *http.Request) {
-	IDParam := strings.TrimPrefix(r.URL.Path, "/menu/")
-	menuID, UUIDerror := uuid.Parse(IDParam)
+	menuID, UUIDerror := uuid.Parse(r.PathValue("id"))
 	if UUIDerror != nil {
 		http.Error(w, fmt.Sprintf("error when processing menu ID", UUIDerror), http.StatusBadRequest)
 		return
