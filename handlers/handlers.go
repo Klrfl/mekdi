@@ -22,43 +22,17 @@ func getMenu(menuID ...uuid.UUID) ([]models.Menu, error) {
 		Description: "",
 	}
 
-	var description sql.NullString
+	var DBQuery string
+	var rows *sql.Rows
+	var err error
 
 	if len(menuID) == 1 {
-		row := database.DB.QueryRow("select * from menu where id = $1", menuID[0])
-
-		if err := row.Scan(
-			&menu.Name,
-			&menu.ServingSize,
-			&menu.Ingredients,
-			&menu.Tag,
-			&menu.Allergy,
-			&menu.Energy,
-			&menu.Protein,
-			&menu.TotalFat,
-			&menu.SatFat,
-			&menu.TransFat,
-			&menu.Chol,
-			&menu.Carbs,
-			&menu.TotalSugar,
-			&menu.AddedSugar,
-			&menu.Sodium,
-			&description,
-			&menu.ID,
-		); err != nil {
-			return nil, err
-		}
-
-		if description.Valid {
-			menu.Description = description.String
-		}
-
-		menuList = append(menuList, menu)
-		return menuList, nil
+		DBQuery = "select * from menu where id = $1"
+		rows, err = database.DB.Query("select * from menu where id = $1", menuID[0])
+	} else {
+		DBQuery = "select * from menu"
+		rows, err = database.DB.Query(DBQuery)
 	}
-
-	DBQuery := "select * from menu"
-	rows, err := database.DB.Query(DBQuery)
 
 	if err != nil {
 		return nil, fmt.Errorf("error when querying database: %s", err)
@@ -66,8 +40,9 @@ func getMenu(menuID ...uuid.UUID) ([]models.Menu, error) {
 
 	defer rows.Close()
 
+	var description sql.NullString
 	for rows.Next() {
-		if err := rows.Scan(
+		err := rows.Scan(
 			&menu.Name,
 			&menu.ServingSize,
 			&menu.Ingredients,
@@ -85,7 +60,8 @@ func getMenu(menuID ...uuid.UUID) ([]models.Menu, error) {
 			&menu.Sodium,
 			&description,
 			&menu.ID,
-		); err != nil {
+		)
+		if err != nil {
 			return nil, err
 		}
 
@@ -170,8 +146,19 @@ func CreateNewMenu(w http.ResponseWriter, r *http.Request) {
 	menuTag := formData.Get("menu-tag")
 	menuAllergy := formData.Get("menu-allergy")
 
-	query := "insert into menu(id, name, description, serving_size, ingredients, tag, allergy) values($1, $2, $3, $4, $5, $6, $7)"
-	_, err = database.DB.Exec(query, menuID, menuName, strings.TrimSpace(menuDescription), menuServingSize, menuIngredients, menuTag, menuAllergy)
+	query := `insert into menu(id, name, description, serving_size, ingredients, tag, allergy)
+  values($1, $2, $3, $4, $5, $6, $7)`
+
+	_, err = database.DB.Exec(
+		query,
+		menuID,
+		menuName,
+		strings.TrimSpace(menuDescription),
+		menuServingSize,
+		menuIngredients,
+		menuTag,
+		menuAllergy,
+	)
 
 	if err != nil {
 		http.Error(w, fmt.Sprintf("error when creating new menu item: %s", err), http.StatusInternalServerError)
@@ -205,8 +192,25 @@ func EditMenuItem(w http.ResponseWriter, r *http.Request) {
 	menuTag := formData.Get("menu-tag")
 	menuAllergy := formData.Get("menu-allergy")
 
-	query := "update menu set name=$2, description=$3, serving_size=$4, ingredients=$5, tag=$6, allergy=$7 where id=$1"
-	_, err = database.DB.Exec(query, menuID, menuName, menuDescription, menuServingSize, menuIngredients, menuTag, menuAllergy)
+	query := `update menu set 
+  name = $2,
+  description = $3,
+  serving_size = $4,
+  ingredients = $5,
+  tag = $6,
+  allergy = $7
+  where id = $1`
+
+	_, err = database.DB.Exec(
+		query,
+		menuID,
+		menuName,
+		menuDescription,
+		menuServingSize,
+		menuIngredients,
+		menuTag,
+		menuAllergy,
+	)
 
 	if err != nil {
 		http.Error(w, fmt.Sprintf("error when updating menu item: %s", err), http.StatusInternalServerError)
