@@ -243,12 +243,13 @@ func DeleteMenu(w http.ResponseWriter, r *http.Request) {
 }
 
 func ServeNewMenuPage(w http.ResponseWriter, r *http.Request) {
-	switch r.Method {
-	case http.MethodGet:
-		newMenuItemPage := path.Join("views", "newItem.html")
-		tmpl := views.RenderPage(newMenuItemPage)
-		tmpl.Execute(w, nil)
+	data := map[string]string{
+		"title": "New menu item",
 	}
+
+	newMenuItemPage := path.Join("views", "newItem.html")
+	tmpl := views.RenderPage(newMenuItemPage)
+	tmpl.Execute(w, data)
 }
 
 func HandleSearch(w http.ResponseWriter, r *http.Request) {
