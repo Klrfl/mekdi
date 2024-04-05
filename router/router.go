@@ -17,7 +17,7 @@ func SetupRoutes() *http.ServeMux {
 	mux.HandleFunc("POST /menu/", handlers.CreateNewMenu)
 	mux.HandleFunc("PATCH /menu/", handlers.EditMenuItem)
 
-	mux.HandleFunc("GET /menu/new/", handlers.ServeNewMenuPage)
+	mux.HandleFunc("GET /new/", handlers.ServeNewMenuPage)
 	mux.HandleFunc("GET /search/", handlers.HandleSearch)
 	return mux
 }
