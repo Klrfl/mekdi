@@ -114,10 +114,14 @@ func GetMenu(w http.ResponseWriter, r *http.Request) {
 	}
 
 	menuItem, err := getMenu(menuID)
-	if err == sql.ErrNoRows {
-		tmpl := views.Render404()
-		tmpl.Execute(w, nil)
-		return
+	if err != nil {
+		if err == sql.ErrNoRows {
+			tmpl := views.Render404()
+			tmpl.Execute(w, nil)
+			return
+		}
+
+		http.Error(w, "Error when getting menu items", http.StatusInternalServerError)
 	}
 
 	page := path.Join("views", "menuItem.html")
