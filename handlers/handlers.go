@@ -229,7 +229,7 @@ func EditMenuItem(w http.ResponseWriter, r *http.Request) {
 func DeleteMenu(w http.ResponseWriter, r *http.Request) {
 	menuID, UUIDerror := uuid.Parse(r.PathValue("id"))
 	if UUIDerror != nil {
-		http.Error(w, fmt.Sprintf("error when processing menu ID", UUIDerror), http.StatusBadRequest)
+		http.Error(w, fmt.Sprintf("error when processing menu ID %s", UUIDerror), http.StatusBadRequest)
 		return
 	}
 
